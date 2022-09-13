@@ -9,29 +9,54 @@ class App extends Component{
     //   name: 'Binaya', //State is used
     // };
     this.state = {
-      name: {firstname:'Binaya', lastname:'Chaudhary'},
-      company:'Ironhide'
+
+      moster:[
+        
+      ],
+      searchField:''
+      // name: {firstname:'Binaya', lastname:'Chaudhary'},
+      // company:'Ironhide'
     };
+    console.log('1');
    
   }
+  onSearchChange = (event) => {
+    const searchField = event.target.value.toLocaleLowerCase();
+    this.setState(()=> {
+      return { searchField}; 
+    });
+ }
+
+  componentDidMount(){
+    console.log('2');
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then((response) => response.json())
+    .then((users) => this.setState(() => {
+      return {moster: users}
+    },
+    ));
+  }
   render() {
+    const {moster,searchField}=this.state;
+    const {onSearchChange}= this;
+    const filtersMosters = moster.filter((moster)=> {
+      return moster.name.toLocaleLowerCase().includes(searchField);
+    }) 
+ 
+  
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Hello {this.state.name.firstname} {this.state.name.lastname} 
-             at {this.state.company}
-          </p>
-          <button onClick={()=> 
-          {
-            this.setState(()=>{
-              return {
-                name:{firstname:'Sonybinaya',lastname:'Chaudhary'}
-              }
-            })
-          }
-          }>Change Name</button>
+         <input
+         className='search_box'
+         type='search'
+         placeholder='Search Monsters'
+         onChange={onSearchChange}
+         />
+          {filtersMosters.map((moster) => {
+            return <h1 key={moster.id}>{moster.name}</h1>;
+          })}
+        
         </header>
       </div>
     );
